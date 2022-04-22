@@ -83,13 +83,12 @@ def findDigit(image: np.ndarray):
     # get model
     # MODEL SHOULD BE TRAINED - model is trained if "digitModel" directory exists
     model = digitFinderModel(False)
-
     # resize image to predict
     img = prepareImage(image)
 
-    prediction = model.predict(img)
+    prediction = model.model.predict(img)
 
-    number = getPredictionValue(prediction)
+    number = getPredictionValue(prediction[0])
 
     return number
 
@@ -98,18 +97,20 @@ def prepareImage(image: np.ndarray) -> np.ndarray:
     img = image.copy()
 
     # check if image is gray scaled
-    if not img.shape[2] == 1:
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    #if not img.shape[2] == 1:
+    #    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # invert black and white
-    img = abs(img - 255)
-
-    # reshape image to fit input of neural network (28,28,1)
-    img.reshape(28, 28, 1)
+    #img = abs(img - 254)
+    img = cv2.bitwise_not(img)
+    # resize image to fit input of neural network (28,28,1)
+    #img.reshape(28, 28, 1)
+    img = cv2.resize(img, (28,28), interpolation=cv2.INTER_AREA)
 
     # normalize image values
-    img = img / 255
-
+    img = np.reshape(img, (1, 28, 28, 1))
+    img = img.astype('float32')
+    img = img / 255.0
     return img
 
 

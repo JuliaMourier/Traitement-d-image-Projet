@@ -4,7 +4,7 @@ from digitFinderModel import findDigit
 
 #TODO change this algo according to segmentation output
 #TODO find good threshold
-def MakeSudokuMatric(listOfImages : [np.ndarray]) :
+def MakeSudokuMatrice(listOfImages : [np.ndarray]) :
     """
     take a list of image, find the value in it and returns a sudoku as a matrice 9x9
     :param listOfImages: should be a list of np.ndarray of size [9][9]
@@ -14,13 +14,16 @@ def MakeSudokuMatric(listOfImages : [np.ndarray]) :
     # 3*255/4 means at least a quarter of the image is black
     threshold = 3 * 255 / 4
     for image in listOfImages :
+        cv2.imshow("img", image)
+        cv2.waitKey(0)
         value = 0
-        if isSomethingOnImage(image, threshold):
+        if not isSomethingOnImage(image, threshold):
             value = findDigit(image)
+        print(value)
         listOfValues.append(value)
 
     #TODO change list into sudoku
-    sudoku = []
+    sudoku = listOfValues
     return sudoku
 
 def isSomethingOnImage(image : np.ndarray, theshold) -> bool :
@@ -29,8 +32,8 @@ def isSomethingOnImage(image : np.ndarray, theshold) -> bool :
     """
     img = image.copy()
     #if image not in grayscale -> convert it to grayscale
-    if not img.shape[2] == 1:
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    #if not img.shape[2] == 1:
+    #    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     if(getMeanValueOfPixel(img) <= theshold) :
         return True
