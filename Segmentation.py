@@ -130,3 +130,4 @@ def getSegmentedSudoku(img: np.ndarray):
     return segmentedSudoku
 
 
+

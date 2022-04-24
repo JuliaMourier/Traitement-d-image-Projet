@@ -14,17 +14,17 @@ def MakeSudokuMatrice(listOfImages: [np.ndarray]):
     # 3*255/4 means at least a quarter of the image is black
     threshold = 240
     # threshold = 3 * 255 / 4
-    for image in reversed(listOfImages):
-        cv2.imshow("img", image)
-        cv2.waitKey(0)
+    for image in listOfImages:
+        #cv2.imshow("img", image)
+        #cv2.waitKey(0)
         value = 0
         if isSomethingOnImage(image, threshold):
             value = findDigit(image)
         #print(value)
         listOfValues.append(value)
 
-    sudoku = listOfValues
-    sudoku = turnListIntoSudoku(sudoku)
+
+    sudoku = turnListIntoSudoku(listOfValues)
     return sudoku
 
 
