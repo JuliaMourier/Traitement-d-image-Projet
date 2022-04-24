@@ -9,8 +9,8 @@ def lecture_img(path):
     #image_url = "images/raw/sudoku.png"
     #img = cv2.imread(image_url, cv2.IMREAD_GRAYSCALE)
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    cv2.imshow('img', img)
-    cv2.waitKey(0)
+    #cv2.imshow('img', img)
+    #cv2.waitKey(0)
     return img
 
 
@@ -30,13 +30,13 @@ def traitement_img(img):  # On applique ce traitement pour isoler chaque "case"
 def segmentation(img):
     # trouver les contours
     _, binary = cv2.threshold(img, 225, 255, cv2.THRESH_BINARY)
-    plt.imshow(binary, cmap="gray")
-    plt.show()
+    #plt.imshow(binary, cmap="gray")
+    #plt.show()
     ext_contours, hierarchie = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    print("contours" + str(len(ext_contours)))
+    #print("contours" + str(len(ext_contours)))
     image = cv2.drawContours(img, ext_contours, -1, (0, 255, 0), 5)
-    cv2.imshow('img', img)
-    cv2.imshow('contours', image)
+    #cv2.imshow('img', img)
+    #cv2.imshow('contours', image)
 
     # cv2.drawContours(img, ext_contours, -1, (0,255,0), 3)
     for c in ext_contours:
@@ -129,16 +129,4 @@ def getSegmentedSudoku(img: np.ndarray):
 
     return segmentedSudoku
 
-"""
-img = lecture_img()
-cv2.imshow('img', img)
-# img = traitement_img(img)
-# cv2.imshow('img', img)
-cv2.waitKey(0)
-# segmentation(img)
-segmentedSudoku = getSegmentedSudoku(img)
-for segment in segmentedSudoku:
-    cv2.imshow("oui", segment)
-    cv2.waitKey(0)
-# cv2.waitKey(0)
-"""
+

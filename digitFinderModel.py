@@ -62,7 +62,7 @@ class digitFinderModel:
         # callback to save best model
         checkpoint = ModelCheckpoint("digitModel", save_best_only=True)
 
-        self.model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_valid, y_valid),
+        self.model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(X_valid, y_valid),
                        callbacks=[checkpoint])
 
 
@@ -97,18 +97,15 @@ def prepareImage(image: np.ndarray) -> np.ndarray:
     img = image.copy()
 
     # check if image is gray scaled
-    #if not img.shape[2] == 1:
-    #    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    if not len(img.shape) == 2:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # invert black and white
-    #img = abs(img - 254)
     img = cv2.bitwise_not(img)
     # resize image to fit input of neural network (28,28,1)
-    #img.reshape(28, 28, 1)
     img = cv2.resize(img, (28,28), interpolation=cv2.INTER_AREA)
-
-    # normalize image values
     img = np.reshape(img, (1, 28, 28, 1))
+    # normalize image values
     img = img.astype('float32')
     img = img / 255.0
     return img
