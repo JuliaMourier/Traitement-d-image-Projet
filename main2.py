@@ -1,5 +1,8 @@
+import numpy as np
+
 from Segmentation import lecture_img, getSegmentedSudoku
 from MakeSudokuMatrice import MakeSudokuMatrice
+from SudokuSolver.backtracking_csp_algorithm import backtracking_csp_algorithm
 import cv2
 
 def main():
@@ -9,7 +12,15 @@ def main():
     segmentedSudoku = getSegmentedSudoku(image)
     print(len(segmentedSudoku))
     sudoku = MakeSudokuMatrice(segmentedSudoku)
-    print(sudoku)
+    #make sudoku a numpy array
+    npSudoku = np.array(sudoku)
+    print("get sudoku :")
+    print(npSudoku)
+    print("solve sudoku :")
+
+    canBeSolved, solvedSudoku = backtracking_csp_algorithm(npSudoku)
+    print(canBeSolved)
+    print(solvedSudoku)
 
 if __name__ == "__main__" :
     main()
