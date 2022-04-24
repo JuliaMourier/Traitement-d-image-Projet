@@ -5,6 +5,8 @@ from Segmentation import lecture_img, getSegmentedSudoku
 from MakeSudokuMatrice import MakeSudokuMatrice
 from SudokuSolver.backtracking_csp_algorithm import backtracking_csp_algorithm
 from getSudokuGridFromImage import getSudokuGridFromImage
+from SudokuSolver.View import View
+
 
 def main():
     #image = lecture_img("images/raw/sudoku.png")
@@ -25,8 +27,13 @@ def main():
     print("solve sudoku :")
 
     canBeSolved, solvedSudoku = backtracking_csp_algorithm(npSudoku)
-    print(canBeSolved)
-    print(solvedSudoku)
+
+    # If it cannot be solved :
+    if not canBeSolved:
+        print("This sudoku is insolvable")
+    else:
+        # Display the solution
+        View(solvedSudoku)
 
 if __name__ == "__main__" :
     main()
