@@ -62,7 +62,7 @@ class digitFinderModel:
         # callback to save best model
         checkpoint = ModelCheckpoint("digitModel", save_best_only=True)
 
-        self.model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(X_valid, y_valid),
+        self.model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_valid, y_valid),
                        callbacks=[checkpoint])
 
 
@@ -124,3 +124,5 @@ def getPredictionValue(prediction: []) -> int:
     else:
         print("error in finding prediction value, value is now 0")
         return 0
+
+#digitFinderModel(True)

@@ -6,11 +6,11 @@ import numpy as np
 
 
 def lecture_img(path):
-    #image_url = "images/raw/sudoku.png"
-    #img = cv2.imread(image_url, cv2.IMREAD_GRAYSCALE)
+    # image_url = "images/raw/sudoku.png"
+    # img = cv2.imread(image_url, cv2.IMREAD_GRAYSCALE)
     img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    #cv2.imshow('img', img)
-    #cv2.waitKey(0)
+    # cv2.imshow('img', img)
+    # cv2.waitKey(0)
     return img
 
 
@@ -30,13 +30,13 @@ def traitement_img(img):  # On applique ce traitement pour isoler chaque "case"
 def segmentation(img):
     # trouver les contours
     _, binary = cv2.threshold(img, 225, 255, cv2.THRESH_BINARY)
-    #plt.imshow(binary, cmap="gray")
-    #plt.show()
+    # plt.imshow(binary, cmap="gray")
+    # plt.show()
     ext_contours, hierarchie = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    #print("contours" + str(len(ext_contours)))
+    # print("contours" + str(len(ext_contours)))
     image = cv2.drawContours(img, ext_contours, -1, (0, 255, 0), 5)
-    #cv2.imshow('img', img)
-    #cv2.imshow('contours', image)
+    # cv2.imshow('img', img)
+    # cv2.imshow('contours', image)
 
     # cv2.drawContours(img, ext_contours, -1, (0,255,0), 3)
     for c in ext_contours:
@@ -95,6 +95,7 @@ def getSegmentedSudoku(img: np.ndarray):
     ext_contours, hierarchie = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     segmentedSudoku = []
     for contour in ext_contours:
+        # find corners
         max_x = contour[0][0][0]
         min_x = contour[0][0][0]
         max_y = contour[0][0][1]
@@ -122,12 +123,36 @@ def getSegmentedSudoku(img: np.ndarray):
 
         M = cv2.getPerspectiveTransform(inputs_pts, outputs_pts)
         segment = cv2.warpPerspective(img, M, (new_size_x, new_size_y))
-        #print(inputs_pts)
-        #cv2.imshow("segment", segment)
+        # print(inputs_pts)
+        # cv2.imshow("segment", segment)
+        # cv2.waitKey(0)
+
+        # find center position on sudoku grid
+        moment = cv2.moments(contour)
+        # center [x,y]
+        centerx = int(moment["m10"] / moment["m00"])
+        centery = int(moment["m01"] / moment["m00"])
+
+        segmentedSudoku.append((segment, centerx, centery))
+
+    sortedSegmentedSudoku = sortFoundNumbers(segmentedSudoku)
+
+    sortedSegmentedSudoku2 = []
+
+    for sorted in sortedSegmentedSudoku :
+        #print(sorted[1], sorted[2])
+        #cv2.imshow("segment", sorted[0])
         #cv2.waitKey(0)
-        segmentedSudoku.append(segment)
+        sortedSegmentedSudoku2.append(sorted[0])
 
-    return segmentedSudoku
+    return sortedSegmentedSudoku2
 
 
-
+def sortFoundNumbers(list):
+    sortedList = list.copy()
+    # sort by y
+    sortedList = sorted(sortedList, key=lambda y: y[2])
+    # sort by x
+    for i in range(0,9) :
+        sortedList[i*9:(i+1)*9] = sorted(sortedList[i*9:(i+1)*9], key=lambda y: y[1])
+    return sortedList
