@@ -6,11 +6,24 @@ from MakeSudokuMatrice import MakeSudokuMatrice
 from SudokuSolver.backtracking_csp_algorithm import backtracking_csp_algorithm
 from getSudokuGridFromImage import getSudokuGridFromImage
 from SudokuSolver.View import View
-
+import argparse
 
 def main():
+    # We first create the ArgumentParser object
+    # The created object 'parser' will have the necessary information
+    # to parse the command-line arguments into data types.
+    parser = argparse.ArgumentParser()
+
+    # Add 'path_image_input' argument using add_argument() including a help. The type is string (by default):
+    parser.add_argument("path_image_input", help="path to input image to be displayed")
+
+    # Parse the argument and store it in a dictionary:
+    args = vars(parser.parse_args())
+
+    INPUT_PATH = args["path_image_input"]
+    # Parameter to put in Config : "images/raw/realSudoku.jpg"
     #image = lecture_img("images/raw/sudoku.png")
-    image = lecture_img("images/raw/realSudoku.jpg")
+    image = lecture_img(INPUT_PATH)
     cv2.imshow("img", image)
     cv2.waitKey(0)
     grid = getSudokuGridFromImage(image)
