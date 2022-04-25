@@ -15,8 +15,6 @@ def MakeSudokuMatrice(listOfImages: [np.ndarray]):
     threshold = 240
     # threshold = 3 * 255 / 4
     for image in listOfImages:
-        #cv2.imshow("img", image)
-        #cv2.waitKey(0)
         value = 0
         if isSomethingOnImage(image, threshold):
             value = findDigit(image)

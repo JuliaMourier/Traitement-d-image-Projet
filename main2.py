@@ -1,12 +1,14 @@
 import numpy as np
 import cv2
+import argparse
 
 from Segmentation import lecture_img, getSegmentedSudoku
 from MakeSudokuMatrice import MakeSudokuMatrice
 from SudokuSolver.backtracking_csp_algorithm import backtracking_csp_algorithm
 from getSudokuGridFromImage import getSudokuGridFromImage
 from SudokuSolver.View import View
-import argparse
+from checkNumber import checkSudoku
+
 
 def main():
     # We first create the ArgumentParser object
@@ -24,6 +26,7 @@ def main():
     # Parameter to put in Config : "images/raw/realSudoku.jpg"
     #image = lecture_img("images/raw/sudoku.png")
     image = lecture_img(INPUT_PATH)
+    image = cv2.resize(image, (450,450))
     cv2.imshow("img", image)
     cv2.waitKey(0)
     grid = getSudokuGridFromImage(image)
@@ -38,6 +41,8 @@ def main():
     print("get sudoku :")
     print(npSudoku)
     print("solve sudoku :")
+
+    npSudoku = checkSudoku(npSudoku)
 
     canBeSolved, solvedSudoku = backtracking_csp_algorithm(npSudoku)
 

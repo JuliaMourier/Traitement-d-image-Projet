@@ -50,9 +50,13 @@ def getSudokuGridFromImage(image: np.ndarray):
 
     # apply warp perspective to get the grid
     M = cv2.getPerspectiveTransform(bounding_rect, dst)
-    bw_image = cv2.threshold(img, 132, 255, cv2.THRESH_BINARY)[1]
+    bw_image = cv2.threshold(img, 140, 255, cv2.THRESH_BINARY)[1]
     warped_img = cv2.warpPerspective(bw_image, M, (grid_width, grid_height))
-    blur_warped = cv2.GaussianBlur(warped_img, (3, 3), 0)
+    #blur_warped = cv2.GaussianBlur(warped_img, (3, 3), 0)
+    #kernel = np.ones((3, 3), np.uint8)
+    #erosion = cv2.erode(warped_img, kernel)
 
-    return blur_warped
+    #return erosion
+    #return blur_warped
+    return warped_img
 

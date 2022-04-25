@@ -14,7 +14,7 @@ class digitFinderModel:
     """
     CNN trained on mnist dataset to categorise numbers
 
-    numbers are written in white with black background of size (28,28,1)
+    numbers are written in white with black background of size (50,50,1)
 
     don't forget to normalize the input image
 
@@ -31,7 +31,7 @@ class digitFinderModel:
     def __init__(self, toTrain: bool):
         self.model = Sequential()
 
-        self.model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
+        self.model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(50, 50, 1)))
         self.model.add(MaxPooling2D((2, 2)))
         self.model.add(Flatten())
         self.model.add(Dense(100, activation='relu'))
@@ -45,12 +45,29 @@ class digitFinderModel:
     def trainModel(self):
         # load dataset
         (X_train, y_train), (X_valid, y_valid) = mnist.load_data()
+
+        new_X_train = []
+        new_X_valid = []
+
+        for train in X_train :
+            #new_X_train.append(prepareImage(train))
+            new_X_train.append(cv2.resize(train, (50,50), interpolation=cv2.INTER_AREA))
+
+        for valid in X_valid :
+            #new_X_valid.append(prepareImage(valid))
+            new_X_valid.append(cv2.resize(valid, (50,50), interpolation=cv2.INTER_AREA))
+
+        new_X_train = np.array(new_X_train)
+        new_X_valid = np.array(new_X_valid)
+
         # reshape input to one channel
-        X_train = X_train.reshape((X_train.shape[0], 28, 28, 1))
-        X_valid = X_valid.reshape((X_valid.shape[0], 28, 28, 1))
+        new_X_train = new_X_train.reshape((new_X_train.shape[0], 50, 50, 1))
+        new_X_valid = new_X_valid.reshape((new_X_valid.shape[0], 50, 50, 1))
+
         # normalize values
-        X_train = X_train / 255
-        X_valid = X_valid / 255
+        new_X_train = new_X_train / 255
+        new_X_valid = new_X_valid / 255
+
         # one hot encode target values
         y_train = to_categorical(y_train)
         y_valid = to_categorical(y_valid)
@@ -62,7 +79,7 @@ class digitFinderModel:
         # callback to save best model
         checkpoint = ModelCheckpoint("digitModel", save_best_only=True)
 
-        self.model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_valid, y_valid),
+        self.model.fit(new_X_train, y_train, epochs=10, batch_size=32, validation_data=(new_X_valid, y_valid),
                        callbacks=[checkpoint])
 
 
@@ -102,12 +119,21 @@ def prepareImage(image: np.ndarray) -> np.ndarray:
 
     # invert black and white
     img = cv2.bitwise_not(img)
-    # resize image to fit input of neural network (28,28,1)
-    img = cv2.resize(img, (28,28), interpolation=cv2.INTER_AREA)
-    img = np.reshape(img, (1, 28, 28, 1))
+    # resize image to fit input of neural network (50,50,1)
+    #kernel = np.ones((1, 1), np.uint8)
+    #img_eroded = cv2.dilate(img, kernel)
+    #img = cv2.resize(img_eroded, (50,50), interpolation=cv2.INTER_AREA)
+    img = cv2.resize(img, (50,50), interpolation=cv2.INTER_AREA)
+    img = cv2.GaussianBlur(img, (5, 5), 0)
+    kernel = np.ones((2, 2), np.uint8)
+    img = cv2.erode(img, kernel)
+    #img = cv2.resize(img, (50,50), interpolation=cv2.INTER_AREA)
+
+    img = np.reshape(img, (1, 50, 50, 1))
     # normalize image values
     img = img.astype('float32')
     img = img / 255.0
+
     return img
 
 

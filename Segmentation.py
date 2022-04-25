@@ -95,6 +95,7 @@ def getSegmentedSudoku(img: np.ndarray):
     ext_contours, hierarchie = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     segmentedSudoku = []
     for contour in ext_contours:
+
         # find corners
         max_x = contour[0][0][0]
         min_x = contour[0][0][0]
@@ -110,6 +111,9 @@ def getSegmentedSudoku(img: np.ndarray):
             if point[0][1] < min_y:
                 min_y = point[0][1]
 
+        if max_x - min_x < 20 or max_y - min_y < 20:
+            continue
+
         pt1 = [min_x, min_y]
         pt2 = [min_x, max_y]
         pt3 = [max_x, max_y]
@@ -123,6 +127,7 @@ def getSegmentedSudoku(img: np.ndarray):
 
         M = cv2.getPerspectiveTransform(inputs_pts, outputs_pts)
         segment = cv2.warpPerspective(img, M, (new_size_x, new_size_y))
+
         # print(inputs_pts)
         # cv2.imshow("segment", segment)
         # cv2.waitKey(0)
@@ -130,6 +135,9 @@ def getSegmentedSudoku(img: np.ndarray):
         # find center position on sudoku grid
         moment = cv2.moments(contour)
         # center [x,y]
+        if moment["m00"] == 0 :
+            #moment["m00"] = 0.00000001
+            continue
         centerx = int(moment["m10"] / moment["m00"])
         centery = int(moment["m01"] / moment["m00"])
 
